@@ -1,58 +1,66 @@
 <template>
-  <div class="hello">
-    <h1>{{ msg }}</h1>
-    <p>
-      For a guide and recipes on how to configure / customize this project,<br>
-      check out the
-      <a href="https://cli.vuejs.org" target="_blank" rel="noopener">vue-cli documentation</a>.
-    </p>
-    <h3>Installed CLI Plugins</h3>
-    <ul>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-babel" target="_blank" rel="noopener">babel</a></li>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-eslint" target="_blank" rel="noopener">eslint</a></li>
-    </ul>
-    <h3>Essential Links</h3>
-    <ul>
-      <li><a href="https://vuejs.org" target="_blank" rel="noopener">Core Docs</a></li>
-      <li><a href="https://forum.vuejs.org" target="_blank" rel="noopener">Forum</a></li>
-      <li><a href="https://chat.vuejs.org" target="_blank" rel="noopener">Community Chat</a></li>
-      <li><a href="https://twitter.com/vuejs" target="_blank" rel="noopener">Twitter</a></li>
-      <li><a href="https://news.vuejs.org" target="_blank" rel="noopener">News</a></li>
-    </ul>
-    <h3>Ecosystem</h3>
-    <ul>
-      <li><a href="https://router.vuejs.org" target="_blank" rel="noopener">vue-router</a></li>
-      <li><a href="https://vuex.vuejs.org" target="_blank" rel="noopener">vuex</a></li>
-      <li><a href="https://github.com/vuejs/vue-devtools#vue-devtools" target="_blank" rel="noopener">vue-devtools</a></li>
-      <li><a href="https://vue-loader.vuejs.org" target="_blank" rel="noopener">vue-loader</a></li>
-      <li><a href="https://github.com/vuejs/awesome-vue" target="_blank" rel="noopener">awesome-vue</a></li>
-    </ul>
-  </div>
+    <div>
+      okok
+      <form v-on:submit.prevent="onSubmit">
+          <vueform
+            v-model="model"
+            :schema="schema"
+            :ui-schema="uiSchema"
+
+          >
+        </vueform>
+
+        <button type="submit">GO</button>
+      </form>
+    </div>
 </template>
 
 <script>
-export default {
-  name: 'HelloWorld',
-  props: {
-    msg: String
-  }
-}
-</script>
+  import VueFormJsonSchema from 'vue-form-json-schema';
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
-h3 {
-  margin: 40px 0 0;
-}
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-li {
-  display: inline-block;
-  margin: 0 10px;
-}
-a {
-  color: #42b983;
-}
-</style>
+  import fields from './fields.json'
+  import axios from 'axios'
+
+  // Vue.component('vue-form-json-schema', VueFormJsonSchema);
+  export default {
+    components: {
+      vueform: VueFormJsonSchema
+    },
+    methods: {
+      onSubmit() {
+        console.log(111111111, { ...this.model});
+        axios.post('http://iplink-form.free.beeceptor.com', {
+    firstName: 'Fred',
+    lastName: 'Flintstone'
+  })
+      },
+      loadFields() {
+        // axios.get('http://iplink-form.free.beeceptor.com')
+        //       .then(response => {
+        //         console.log(response);
+        //         this.schema.properties = response.data.properties;
+        //         this.uiSchema = response.data.uiSchema;
+        //       })
+
+        this.schema.properties = fields.properties;
+                this.uiSchema = fields.uiSchema;
+      }
+    },
+    data() {
+      return {
+        // An object which holds the form values
+        model: {},
+        // A valid JSON Schema object
+        schema: {
+          type: 'object',
+          properties: {},
+        },
+        // Array of HTML elements or Vue components
+        uiSchema: [],
+      };
+    },
+    mounted() {
+      this.loadFields();
+    }
+  };
+</script>
